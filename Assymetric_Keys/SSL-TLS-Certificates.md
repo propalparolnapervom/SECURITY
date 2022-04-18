@@ -144,7 +144,7 @@ openssl req -x509 -in ca.csr -signkey privateKey.key -out certificate.crt
 
 ## Certificate
 
-### Generate
+### Generate self-signed certificate
 
 Generate a new self-signed `certificate` and new corresponding `private key`
 ```
@@ -159,6 +159,28 @@ Generate a new self-signed `certificate`, based on both:
 openssl req -x509 -in ca.csr -signkey privateKey.key -out certificate.crt
 ```
 
+### Generate certificate signed by CA
+
+For example, you've already have generated some `ca.key`/`ca.crt` self-signed key pair (as shown above) and now want to use it to sign other certificates.
+
+> **NOTE**: If `ca.key`/`ca.crt` key pair is gonna be used to sign other certificates, create manually `ca.srl` with some number.
+> The sequence number from the file is gonna be used to generate a unique serial number for each signed certificate.
+> For example:
+> `echo 02 > ca.srl`
+
+Generate a new `certificate`, signed by CA
+```
+# Generate new `private key` 
+openssl genrsa -out admin.key 2048
+
+# Generate new corresponding `CSR`
+openssl req -new -key admin.key -subj "/CN=kube-admin" -out admin.csr
+
+# Generate a new `certificate`, by signing the `CSR` with CA key pair
+openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt
+```
+
+
 
 ### Show 
 
@@ -166,18 +188,18 @@ What is contained in a certificate
 ```
 openssl x509 -text -noout -in certificate.crt
 
-Certificate:
-    Data:
-        Version: 3 (0x2)
-        Serial Number:
-            ...
-    Signature Algorithm: sha256WithRSAEncryption
-        Issuer: C=GB, ST=Greater Manchester, L=Salford, O=Sectigo Limited, CN=Sectigo RSA Domain Validation Secure Server CA
-        Validity
-            Not Before: Nov 17 00:00:00 2021 GMT
-            Not After : Nov 30 23:59:59 2022 GMT
-        Subject: CN=*.<your_domain>
-        ...
+   Certificate:
+       Data:
+           Version: 3 (0x2)
+           Serial Number:
+               ...
+       Signature Algorithm: sha256WithRSAEncryption
+           Issuer: C=GB, ST=Greater Manchester, L=Salford, O=Sectigo Limited, CN=Sectigo RSA Domain Validation Secure Server CA
+           Validity
+               Not Before: Nov 17 00:00:00 2021 GMT
+               Not After : Nov 30 23:59:59 2022 GMT
+           Subject: CN=*.<your_domain>
+           ...
 ```
 
 Show a `public key` that is contained in a certificate
@@ -193,6 +215,10 @@ openssl s_client -connect www.godaddy.com:443
 openssl s_client -connect www.godaddy.com:443 -showcerts
 ```
 
+Show a serial number for specified certificate
+```
+openssl x509 -in "ca.crt" -noout -serial
+```
 
 
 
