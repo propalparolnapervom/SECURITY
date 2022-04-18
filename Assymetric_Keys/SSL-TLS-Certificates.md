@@ -2,7 +2,25 @@
 
 ## Overall
 
+In cryptography, a `public key certificate`, also known as a `digital certificate`, `X.509 certificate` or `identity certificate`, is an electronic document used to prove the validity of a `public key`.
+
+The `certificate` includes:
+- information about the key;
+- information about the identity of its owner (called the `subject`);
+- digital signature of an entity that has verified the certificate's contents (called the `issuer`).
+
+If the signature is valid, and the software examining the certificate trusts the issuer, then it can use that key to communicate securely with the certificate's subject.
+
+`X.509` is a standard defining the format of `public key certificates`.
+
+An `X.509 certificate` binds an `identity` to a `public key` using a `digital signature`.
+
+> **NOTE**: `SSL` stands for _Secure Sockets Layer_. 
+> While most people still refer to `SSL`, it is technically the older version of the more modern `Transport Layer Security (TLS)` protocol. 
+> However, for all practical purposes, you can think of `SSL` and `TLS` as the same thing.
+
 When someone refers to an `RSA certificate`, what they’re talking about is an `SSL certificate` that uses the `RSA algorithm` for digital signatures and/or data encryption.
+
 
 `RSA` (Rivest–Shamir–Adleman) is a cryptographic algorithm that encrypts and decrypts the data. Invented in the year 1978, RSA was named after Rivest, Shamir, and Adleman – the mathematicians who invented it.
 
