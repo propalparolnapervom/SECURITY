@@ -126,12 +126,37 @@ Generate new `CSR`, based on old `private key` (the one that already exists)
 openssl req -out CSR.csr -key privateKey.key -new
 ```
 
+Generate new `CSR`, based on old `private key` (the one that already exists), when multiple parameters should be specified (for DNS, for example)
+```
+cat << EOF > openssl.cnf
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+countryName = UA
+[v3_req]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+IP.1 = 10.96.0.1
+IP.2 = 172.17.0.87
+EOF
+
+openssl req -new -key apiserver.key -subj "/CN=kube-apiserver" -out apiserver.csr -config openssl.cnf
+```
+
 Generate new `CSR`, based on both old (already existing):
 - `certificate`
 - `private key` 
 ```
 openssl x509 -x509toreq -in certificate.crt -out CSR.csr -signkey privateKey.key
 ```
+
 
 ### Sign CSR
 
